@@ -1,0 +1,1846 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>Какая ты мама? | Қандай анасың?</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,600;1,300;1,400&family=Nunito:wght@300;400;500;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.0/font/bootstrap-icons.css">
+<script src="https://cdn.jsdelivr.net/npm/@emailjs/browser@3/dist/email.min.js"></script>
+<style>
+  :root {
+    --blush: #F9E8E2;
+    --rose: #E8B4A8;
+    --deep-rose: #C47B6E;
+    --sage: #B5C9B7;
+    --sage-deep: #7A9E7E;
+    --cream: #FDF6F0;
+    --warm-white: #FFFAF7;
+    --text-dark: #3D2B2B;
+    --text-mid: #7A5C5C;
+    --text-light: #B08888;
+    --gold: #C9A96E;
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  body {
+    font-family: 'Nunito', sans-serif;
+    background: var(--warm-white);
+    color: var(--text-dark);
+    min-height: 100vh;
+    overflow-x: hidden;
+  }
+
+  /* ── BACKGROUND ── */
+  .bg-decoration {
+    position: fixed; inset: 0; pointer-events: none; z-index: 0;
+    overflow: hidden;
+  }
+  .bg-decoration::before {
+    content: '';
+    position: absolute;
+    width: 600px; height: 600px;
+    border-radius: 50%;
+    background: radial-gradient(circle, rgba(232,180,168,0.18) 0%, transparent 70%);
+    top: -200px; right: -150px;
+  }
+  .bg-decoration::after {
+    content: '';
+    position: absolute;
+    width: 500px; height: 500px;
+    border-radius: 50%;
+    background: radial-gradient(circle, rgba(181,201,183,0.15) 0%, transparent 70%);
+    bottom: -100px; left: -100px;
+  }
+  .petal {
+    position: absolute;
+    border-radius: 50% 0 50% 0;
+    opacity: 0.07;
+  }
+
+  /* ── LANGUAGE TOGGLE ── */
+  .lang-bar {
+    position: fixed; top: 16px; right: 20px; z-index: 100;
+    display: flex; gap: 6px;
+  }
+  .lang-btn {
+    padding: 5px 14px;
+    border: 1.5px solid var(--rose);
+    border-radius: 20px;
+    background: transparent;
+    font-family: 'Nunito', sans-serif;
+    font-size: 12px;
+    font-weight: 600;
+    color: var(--text-mid);
+    cursor: pointer;
+    transition: all 0.3s;
+    letter-spacing: 0.5px;
+  }
+  .lang-btn.active, .lang-btn:hover {
+    background: var(--rose);
+    color: white;
+    border-color: var(--rose);
+  }
+
+  /* ── WRAPPER ── */
+  .app {
+    position: relative; z-index: 1;
+    min-height: 100vh;
+    display: flex; flex-direction: column; align-items: center;
+    justify-content: center;
+    padding: 60px 20px 40px;
+  }
+
+  /* ── SPONSOR PANELS ── */
+  .app-wrapper {
+    display: flex;
+    width: 100%;
+    max-width: 1400px;
+    margin: 0 auto;
+    gap: 20px;
+    position: relative;
+    align-items: flex-start;
+  }
+
+  .sponsor-panel {
+    display: none;
+    width: 160px;
+    position: sticky;
+    top: 100px;
+    height: fit-content;
+    flex-shrink: 0;
+  }
+
+  .sponsor-panel.left { order: -1; }
+  .sponsor-panel.right { order: 1; }
+
+  .sponsor-items {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+  }
+
+  .sponsor-item {
+    width: 100%;
+    aspect-ratio: 1;
+    background: linear-gradient(135deg, var(--cream), var(--blush));
+    border: 2px solid rgba(196,123,110,0.15);
+    border-radius: 12px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 48px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    overflow: hidden;
+    position: relative;
+    box-shadow: 0 2px 8px rgba(196,123,110,0.08);
+    color: var(--deep-rose);
+    padding: 12px;
+    text-align: center;
+  }
+
+  .sponsor-label {
+    display: block;
+    font-size: 13px;
+    line-height: 1.45;
+    font-weight: 600;
+    color: var(--deep-rose);
+  }
+
+  .sponsor-label .kz {
+    display: none;
+    font-size: 12px;
+    font-weight: 500;
+    color: var(--text-mid);
+    margin-top: 6px;
+  }
+
+  .sponsor-item:hover {
+    border-color: var(--rose);
+    box-shadow: 0 4px 16px rgba(196,123,110,0.2);
+    transform: translateY(-2px);
+  }
+
+  .sponsor-item img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+
+  .sponsor-item a {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 100%;
+    height: 100%;
+  }
+
+  /* Sponsor banner for mobile */
+  .sponsor-banner-top,
+  .sponsor-banner-bottom {
+    display: none;
+    width: 100%;
+    background: linear-gradient(90deg, var(--cream), var(--blush));
+    border: 2px solid rgba(196,123,110,0.15);
+    border-radius: 12px;
+    padding: 12px;
+    margin: 12px 0;
+    overflow-x: auto;
+    box-shadow: 0 2px 8px rgba(196,123,110,0.08);
+  }
+
+  .sponsor-banner-title {
+    font-size: 11px;
+    letter-spacing: 1.2px;
+    text-transform: uppercase;
+    color: var(--text-light);
+    margin-bottom: 10px;
+    font-weight: 700;
+  }
+
+  .sponsor-banner-items {
+    display: flex;
+    gap: 12px;
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+    padding-bottom: 2px;
+  }
+
+  .sponsor-banner-item {
+    flex: 0 0 180px;
+    min-height: 108px;
+    background: white;
+    border: 1px solid rgba(196,123,110,0.1);
+    border-radius: 8px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 13px;
+    line-height: 1.4;
+    text-align: center;
+    padding: 12px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    color: var(--deep-rose);
+  }
+
+  .sponsor-banner-item:hover {
+    transform: scale(1.05);
+    box-shadow: 0 2px 8px rgba(196,123,110,0.15);
+  }
+
+  .sponsor-banner-item img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    border-radius: 6px;
+  }
+
+  .sponsor-banner-item a {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 100%;
+    height: 100%;
+  }
+
+  /* Main content */
+  .app-main {
+    flex: 1;
+    width: 100%;
+    min-width: 0;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+  }
+
+  .screen {
+    display: none;
+    width: 100%; max-width: 620px;
+    margin: 0 auto;
+    animation: fadeUp 0.5s ease;
+  }
+  .screen.active { display: flex; flex-direction: column; }
+
+  @keyframes fadeUp {
+    from { opacity: 0; transform: translateY(24px); }
+    to   { opacity: 1; transform: translateY(0); }
+  }
+
+  /* ── HEADER LOGO ── */
+  .site-header {
+    text-align: center; margin-bottom: 40px;
+  }
+  .welcome-flower {
+    font-size: 32px; margin-bottom: 8px; display: block; color: var(--rose);
+  }
+  .site-title {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 14px; font-weight: 400;
+    letter-spacing: 3px; text-transform: uppercase;
+    color: var(--text-light);
+  }
+
+  /* ── WELCOME SCREEN ── */
+  .welcome-card {
+    background: var(--cream);
+    border-radius: 32px;
+    padding: 52px 48px;
+    box-shadow: 0 8px 48px rgba(196,123,110,0.10);
+    text-align: center;
+    position: relative;
+    overflow: hidden;
+  }
+  .welcome-card::before {
+    content: '';
+    position: absolute;
+    top: -30px; right: -30px;
+    width: 160px; height: 160px;
+    border-radius: 50%;
+    background: radial-gradient(circle, rgba(232,180,168,0.25), transparent 70%);
+  }
+  .welcome-icon {
+    font-size: 56px; display: block; margin-bottom: 20px;
+    animation: float 3s ease-in-out infinite;
+    color: var(--deep-rose);
+  }
+  .welcome-icon i {
+    display: block;
+  }
+  @keyframes float {
+    0%,100% { transform: translateY(0); }
+    50% { transform: translateY(-8px); }
+  }
+  .welcome-title {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: clamp(36px, 7vw, 52px);
+    font-weight: 300;
+    line-height: 1.15;
+    color: var(--text-dark);
+    margin-bottom: 16px;
+  }
+  .welcome-title em {
+    font-style: italic; color: var(--deep-rose);
+  }
+  .welcome-sub {
+    font-size: 15px; color: var(--text-mid);
+    line-height: 1.7; margin-bottom: 32px;
+    font-weight: 300;
+  }
+  .welcome-sub .kz { display: none; }
+
+  .btn-start {
+    display: inline-block;
+    padding: 16px 44px;
+    background: linear-gradient(135deg, var(--deep-rose), var(--rose));
+    color: white;
+    border: none; border-radius: 50px;
+    font-family: 'Nunito', sans-serif;
+    font-size: 16px; font-weight: 600;
+    cursor: pointer;
+    box-shadow: 0 4px 20px rgba(196,123,110,0.35);
+    transition: all 0.3s;
+    letter-spacing: 0.3px;
+  }
+  .btn-start:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 8px 28px rgba(196,123,110,0.45);
+  }
+  .welcome-note {
+    margin-top: 20px;
+    font-size: 12px; color: var(--text-light);
+  }
+  .welcome-note .kz { display: none; }
+
+  /* ── PROGRESS ── */
+  .progress-wrap {
+    margin-bottom: 28px;
+  }
+  .progress-meta {
+    display: flex; justify-content: space-between; align-items: center;
+    margin-bottom: 10px;
+  }
+  .progress-label {
+    font-size: 12px; color: var(--text-light);
+    letter-spacing: 1px; text-transform: uppercase;
+    font-weight: 600;
+  }
+  .progress-count {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 20px; color: var(--deep-rose);
+    font-weight: 400;
+  }
+  .progress-bar {
+    height: 4px;
+    background: rgba(196,123,110,0.12);
+    border-radius: 4px;
+    overflow: hidden;
+  }
+  .progress-fill {
+    height: 100%;
+    background: linear-gradient(90deg, var(--rose), var(--deep-rose));
+    border-radius: 4px;
+    transition: width 0.5s cubic-bezier(0.4,0,0.2,1);
+  }
+
+  /* ── QUESTION CARD ── */
+  .question-card {
+    background: var(--cream);
+    border-radius: 28px;
+    padding: 44px 44px 40px;
+    box-shadow: 0 6px 36px rgba(196,123,110,0.09);
+  }
+  .q-number {
+    font-size: 11px; font-weight: 700;
+    letter-spacing: 2px; text-transform: uppercase;
+    color: var(--rose);
+    margin-bottom: 16px;
+    display: block;
+  }
+  .q-text {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: clamp(20px, 4vw, 26px);
+    font-weight: 400;
+    line-height: 1.45;
+    color: var(--text-dark);
+    margin-bottom: 32px;
+  }
+
+  /* ── QUESTION IMAGE ── */
+  .q-image-wrap {
+    width: 100%;
+    height: 240px;
+    border-radius: 16px;
+    overflow: hidden;
+    margin-bottom: 28px;
+    background: linear-gradient(135deg, var(--blush), var(--cream));
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    box-shadow: 0 4px 16px rgba(196,123,110,0.12);
+    padding: 10px;
+  }
+
+  .q-image-wrap img {
+    width: 100%;
+    height: 100%;
+    object-fit: contain;
+    object-position: center;
+    border-radius: 10px;
+    background: #fff;
+  }
+
+  .q-image-fallback {
+    text-align: center;
+    padding: 16px;
+    color: var(--text-mid);
+    font-size: 14px;
+    line-height: 1.5;
+  }
+
+  /* ── OPTIONS ── */
+  .options-list {
+    display: flex; flex-direction: column; gap: 12px;
+  }
+  .option-btn {
+    display: flex; align-items: center; gap: 16px;
+    padding: 18px 22px;
+    background: white;
+    border: 2px solid transparent;
+    border-radius: 16px;
+    cursor: pointer;
+    transition: all 0.25s;
+    text-align: left;
+    box-shadow: 0 2px 12px rgba(0,0,0,0.04);
+  }
+  .option-btn:hover {
+    border-color: var(--rose);
+    background: var(--blush);
+    transform: translateX(4px);
+  }
+  .option-btn.selected {
+    border-color: var(--deep-rose);
+    background: linear-gradient(135deg, rgba(249,232,226,0.8), rgba(232,180,168,0.2));
+    box-shadow: 0 4px 16px rgba(196,123,110,0.15);
+  }
+  .option-dot {
+    width: 22px; height: 22px; flex-shrink: 0;
+    border-radius: 50%;
+    border: 2px solid var(--rose);
+    display: flex; align-items: center; justify-content: center;
+    transition: all 0.25s;
+  }
+  .option-btn.selected .option-dot {
+    background: var(--deep-rose);
+    border-color: var(--deep-rose);
+  }
+  .option-dot::after {
+    content: '';
+    width: 8px; height: 8px;
+    border-radius: 50%;
+    background: white;
+    opacity: 0;
+    transition: opacity 0.2s;
+  }
+  .option-btn.selected .option-dot::after { opacity: 1; }
+  .option-text {
+    font-size: 15px; line-height: 1.5;
+    color: var(--text-dark); font-weight: 400;
+  }
+
+  /* ── NAV BUTTONS ── */
+  .q-nav {
+    display: flex; justify-content: space-between; align-items: center;
+    margin-top: 28px;
+  }
+  .btn-nav {
+    display: flex; align-items: center; gap: 8px;
+    padding: 12px 24px;
+    border-radius: 50px;
+    border: 2px solid var(--rose);
+    background: transparent;
+    color: var(--deep-rose);
+    font-family: 'Nunito', sans-serif;
+    font-size: 14px; font-weight: 600;
+    cursor: pointer;
+    transition: all 0.25s;
+  }
+  .btn-nav:hover {
+    background: var(--rose); color: white;
+  }
+  .btn-nav:disabled {
+    opacity: 0.3; cursor: not-allowed;
+  }
+  .btn-nav:disabled:hover { background: transparent; color: var(--deep-rose); }
+  .btn-next {
+    background: linear-gradient(135deg, var(--deep-rose), var(--rose));
+    color: white; border-color: transparent;
+    box-shadow: 0 4px 16px rgba(196,123,110,0.3);
+  }
+  .btn-next:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 22px rgba(196,123,110,0.4);
+    background: linear-gradient(135deg, var(--deep-rose), var(--rose));
+  }
+  .btn-next:disabled {
+    opacity: 0.45;
+    transform: none;
+    box-shadow: none;
+    cursor: not-allowed;
+  }
+
+  /* ── FORM SCREEN ── */
+  .form-card {
+    background: var(--cream);
+    border-radius: 28px;
+    padding: 44px 44px 40px;
+    box-shadow: 0 6px 36px rgba(196,123,110,0.09);
+  }
+  .form-heading {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 32px; font-weight: 300;
+    color: var(--text-dark);
+    margin-bottom: 8px;
+  }
+  .form-heading em { font-style: italic; color: var(--deep-rose); }
+  .form-sub {
+    font-size: 14px; color: var(--text-mid);
+    line-height: 1.6; margin-bottom: 32px;
+  }
+  .form-group { margin-bottom: 20px; }
+  .form-label {
+    display: block;
+    font-size: 11px; font-weight: 700;
+    letter-spacing: 1.5px; text-transform: uppercase;
+    color: var(--text-light); margin-bottom: 8px;
+  }
+  .form-input {
+    width: 100%;
+    padding: 14px 18px;
+    border: 2px solid rgba(196,123,110,0.2);
+    border-radius: 14px;
+    background: white;
+    font-family: 'Nunito', sans-serif;
+    font-size: 15px;
+    color: var(--text-dark);
+    transition: all 0.25s;
+    outline: none;
+  }
+  .form-input:focus {
+    border-color: var(--rose);
+    box-shadow: 0 0 0 4px rgba(232,180,168,0.15);
+  }
+  .form-row { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+  .form-privacy {
+    font-size: 12px; color: var(--text-light);
+    line-height: 1.6; margin-top: 16px;
+    padding: 14px 16px;
+    background: rgba(181,201,183,0.12);
+    border-radius: 12px;
+    border-left: 3px solid var(--sage);
+  }
+  .btn-submit {
+    width: 100%; margin-top: 24px;
+    padding: 18px;
+    background: linear-gradient(135deg, var(--deep-rose), var(--rose));
+    color: white; border: none; border-radius: 50px;
+    font-family: 'Nunito', sans-serif;
+    font-size: 16px; font-weight: 700;
+    cursor: pointer;
+    box-shadow: 0 4px 20px rgba(196,123,110,0.35);
+    transition: all 0.3s;
+    letter-spacing: 0.3px;
+  }
+  .btn-submit:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 8px 28px rgba(196,123,110,0.45);
+  }
+  .btn-submit:disabled {
+    opacity: 0.6; cursor: not-allowed; transform: none;
+  }
+  .sending-msg {
+    text-align: center; margin-top: 16px;
+    font-size: 14px; color: var(--text-mid);
+    display: none;
+  }
+
+  /* ── RESULT SCREEN ── */
+  .result-card {
+    background: var(--cream);
+    border-radius: 28px;
+    padding: 52px 44px 44px;
+    box-shadow: 0 8px 48px rgba(196,123,110,0.12);
+    text-align: center;
+    position: relative; overflow: hidden;
+  }
+  .result-badge {
+    display: inline-flex; align-items: center; gap: 8px;
+    padding: 6px 18px;
+    border-radius: 20px;
+    font-size: 11px; font-weight: 700;
+    letter-spacing: 2px; text-transform: uppercase;
+    margin-bottom: 24px;
+  }
+  .result-icon {
+    font-size: 72px; display: block;
+    margin-bottom: 20px;
+    animation: float 3s ease-in-out infinite;
+    color: var(--deep-rose);
+  }
+  .result-icon i {
+    font-size: 72px;
+  }
+  .result-image-wrap {
+    width: 100%;
+    height: 260px;
+    border-radius: 16px;
+    background: linear-gradient(135deg, var(--blush), var(--cream));
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    overflow: hidden;
+    margin: 0 0 20px;
+    padding: 10px;
+    box-shadow: 0 4px 16px rgba(196,123,110,0.12);
+  }
+  .result-image-wrap img {
+    width: 100%;
+    height: 100%;
+    object-fit: contain;
+    object-position: center;
+    border-radius: 10px;
+    background: #fff;
+  }
+  .result-type {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: clamp(30px, 6vw, 44px);
+    font-weight: 300; line-height: 1.2;
+    margin-bottom: 8px;
+  }
+  .result-tagline {
+    font-style: italic;
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 18px; color: var(--text-mid);
+    margin-bottom: 28px;
+  }
+  .result-divider {
+    width: 60px; height: 2px;
+    background: linear-gradient(90deg, transparent, var(--rose), transparent);
+    margin: 0 auto 28px;
+  }
+  .result-desc {
+    font-size: 15px; line-height: 1.8;
+    color: var(--text-mid); margin-bottom: 28px;
+    text-align: left;
+  }
+  .strengths-wrap {
+    display: grid; grid-template-columns: 1fr 1fr; gap: 16px;
+    text-align: left; margin-bottom: 32px;
+  }
+  .strength-box {
+    padding: 18px 20px;
+    border-radius: 16px;
+  }
+  .strength-box.plus {
+    background: rgba(181,201,183,0.2);
+    border: 1.5px solid rgba(122,158,126,0.25);
+  }
+  .strength-box.minus {
+    background: rgba(232,180,168,0.15);
+    border: 1.5px solid rgba(196,123,110,0.2);
+  }
+  .strength-label {
+    font-size: 10px; font-weight: 800;
+    letter-spacing: 1.5px; text-transform: uppercase;
+    margin-bottom: 8px; display: block;
+  }
+  .strength-box.plus .strength-label { color: var(--sage-deep); }
+  .strength-box.minus .strength-label { color: var(--deep-rose); }
+  .strength-text { font-size: 14px; line-height: 1.6; color: var(--text-mid); }
+  .result-name-msg {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 22px; color: var(--text-dark);
+    margin-bottom: 24px;
+    font-style: italic;
+  }
+  .btn-restart {
+    padding: 14px 36px;
+    border: 2px solid var(--rose);
+    border-radius: 50px;
+    background: transparent;
+    color: var(--deep-rose);
+    font-family: 'Nunito', sans-serif;
+    font-size: 14px; font-weight: 600;
+    cursor: pointer;
+    transition: all 0.25s;
+  }
+  .btn-restart:hover {
+    background: var(--rose); color: white;
+  }
+  .confetti-row {
+    font-size: 28px; margin-bottom: 20px;
+    animation: fadeUp 0.8s ease 0.3s both;
+  }
+
+  /* RESULT THEMES */
+  .theme-ideal .result-badge { background: rgba(201,169,110,0.15); color: var(--gold); }
+  .theme-ideal .result-type { color: var(--gold); }
+  .theme-cool .result-badge { background: rgba(122,158,126,0.15); color: var(--sage-deep); }
+  .theme-cool .result-type { color: var(--sage-deep); }
+  .theme-worried .result-badge { background: rgba(232,180,168,0.2); color: var(--deep-rose); }
+  .theme-worried .result-type { color: var(--deep-rose); }
+
+  /* ── DOTS INDICATOR ── */
+  .dots-row {
+    display: flex; justify-content: center; gap: 6px;
+    margin-bottom: 24px;
+  }
+  .dot {
+    width: 7px; height: 7px;
+    border-radius: 50%;
+    background: rgba(196,123,110,0.2);
+    transition: all 0.3s;
+  }
+  .dot.done { background: var(--rose); }
+  .dot.current {
+    background: var(--deep-rose);
+    transform: scale(1.3);
+  }
+
+  /* ── FOOTER ── */
+  .footer-note {
+    text-align: center; margin-top: 32px;
+    font-size: 12px; color: var(--text-light);
+    line-height: 1.8;
+  }
+
+  /* Responsive */
+  @media (max-width: 520px) {
+    .question-card, .form-card, .result-card, .welcome-card {
+      padding: 32px 24px 28px;
+    }
+    .form-row { grid-template-columns: 1fr; }
+    .strengths-wrap { grid-template-columns: 1fr; }
+    .q-nav { gap: 10px; }
+    .btn-nav { padding: 10px 18px; font-size: 13px; }
+
+    /* Show sponsor banners on mobile */
+    .sponsor-banner-top,
+    .sponsor-banner-bottom {
+      display: block;
+      margin: 10px 0;
+      padding: 10px;
+    }
+    .sponsor-panel {
+      display: none !important;
+    }
+    .app-wrapper {
+      flex-direction: column;
+      gap: 0;
+    }
+    .app-main {
+      width: 100%;
+    }
+
+    .q-image-wrap {
+      height: 210px;
+      padding: 8px;
+    }
+    .result-image-wrap {
+      height: 220px;
+      padding: 8px;
+    }
+
+    .sponsor-banner-item {
+      flex: 0 0 150px;
+      min-height: 94px;
+      font-size: 12px;
+      padding: 10px;
+    }
+  }
+
+  /* Show sponsor panels on desktop */
+  @media (min-width: 1024px) {
+    .sponsor-panel {
+      display: block;
+    }
+    .sponsor-banner-top,
+    .sponsor-banner-bottom {
+      display: none !important;
+    }
+    .app {
+      padding: 40px 20px;
+    }
+  }
+
+  /* KZ language switch */
+  body.lang-kz .ru { display: none !important; }
+  body.lang-kz .kz { display: block !important; }
+  body.lang-kz .sponsor-label .kz { display: block !important; }
+  body.lang-kz .sponsor-label .ru { display: none !important; }
+  body.lang-kz .kz-inline { display: inline !important; }
+  body.lang-kz .ru-inline { display: none !important; }
+  .kz { display: none; }
+  .kz-inline { display: none; }
+</style>
+</head>
+<body class="lang-ru">
+
+<div class="bg-decoration"></div>
+
+<!-- Language toggle -->
+<div class="lang-bar">
+  <button class="lang-btn active" onclick="setLang('ru')">РУС</button>
+  <button class="lang-btn" onclick="setLang('kz')">ҚАЗ</button>
+</div>
+
+<div class="app">
+
+  <!-- Left Sponsor Panel (Desktop) -->
+  <div class="app-wrapper">
+    <div class="sponsor-panel left">
+      <div class="sponsor-items">
+        <div class="sponsor-item" onclick="openSponsorLink(1)">
+          <span class="sponsor-label">
+            <span class="ru">Здесь могла быть ваша реклама</span>
+            <span class="kz">Мұнда сіздің жарнамаңыз болуы мүмкін</span>
+          </span>
+        </div>
+        <div class="sponsor-item" onclick="openSponsorLink(2)">
+          <span class="sponsor-label">
+            <span class="ru">Ваш бренд увидят будущие мамы</span>
+            <span class="kz">Сіздің брендіңізді болашақ аналар көреді</span>
+          </span>
+        </div>
+      </div>
+    </div>
+
+    <!-- Main Content -->
+    <div class="app-main">
+
+      <!-- Sponsor Banner Top (Mobile) -->
+      <div class="sponsor-banner-top">
+        <div class="sponsor-banner-title">
+          <span class="ru">Рекламная панель</span>
+          <span class="kz">Жарнама панелі</span>
+        </div>
+        <div class="sponsor-banner-items">
+          <div class="sponsor-banner-item" onclick="openSponsorLink(1)">
+            <span class="ru">Здесь могла быть ваша реклама</span>
+            <span class="kz">Мұнда сіздің жарнамаңыз болуы мүмкін</span>
+          </div>
+          <div class="sponsor-banner-item" onclick="openSponsorLink(2)">
+            <span class="ru">Ваш продукт в поле внимания</span>
+            <span class="kz">Сіздің өніміңіз назарда болады</span>
+          </div>
+          <div class="sponsor-banner-item" onclick="openSponsorLink(3)">
+            <span class="ru">Забронируйте этот рекламный слот</span>
+            <span class="kz">Бұл жарнама орнын брондаңыз</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- ══════════════ WELCOME ══════════════ -->
+      <div class="screen active" id="screen-welcome">
+    <div class="site-header">
+      <i class="bi bi-flower1 welcome-flower"></i>
+      <div class="site-title ru">Тест для будущих мам</div>
+      <div class="site-title kz">Болашақ аналарға тест</div>
+    </div>
+    <div class="welcome-card">
+      <div class="welcome-icon"><i class="bi bi-person-pregnancy"></i></div>
+      <h1 class="welcome-title">
+        <span class="ru">Какая ты <em>мама?</em></span>
+        <span class="kz">Сен қандай <em>анасың?</em></span>
+      </h1>
+      <p class="welcome-sub">
+        <span class="ru">10 вопросов о материнстве — и ты узнаешь, какой мамой станешь. Идеальной, классной или беспокойной? Пройди тест и получи свой результат!</span>
+        <span class="kz">Аналық туралы 10 сұрақ — сен қандай ана боласыңды білесің. Мінсіз, керемет немесе алаңдаушы? Тестті тапсыр және нәтижеңді ал!</span>
+      </p>
+      <button class="btn-start" onclick="startQuiz()">
+        <span class="ru">Начать тест <i class="bi bi-arrow-right"></i></span>
+        <span class="kz">Тестті бастау <i class="bi bi-arrow-right"></i></span>
+      </button>
+      <p class="welcome-note">
+        <span class="ru"><i class="bi bi-clock-history"></i> Займёт около 5 минут · 10 вопросов</span>
+        <span class="kz"><i class="bi bi-clock-history"></i> Шамамен 5 минут · 10 сұрақ</span>
+      </p>
+    </div>
+  </div>
+
+  <!-- ══════════════ QUESTION ══════════════ -->
+  <div class="screen" id="screen-question">
+    <div class="site-header">
+      <i class="bi bi-flower1 welcome-flower"></i>
+      <div class="site-title ru">Какая ты мама?</div>
+      <div class="site-title kz">Сен қандай анасың?</div>
+    </div>
+
+    <div class="progress-wrap">
+      <div class="progress-meta">
+        <span class="progress-label">
+          <span class="ru">Вопрос</span>
+          <span class="kz">Сұрақ</span>
+        </span>
+        <span class="progress-count" id="q-counter">1 / 10</span>
+      </div>
+      <div class="progress-bar"><div class="progress-fill" id="progress-fill" style="width:10%"></div></div>
+    </div>
+
+    <div class="dots-row" id="dots-row"></div>
+
+    <div class="question-card">
+      <span class="q-number" id="q-number-label">Вопрос 01</span>
+      <p class="q-text" id="q-text"></p>
+      <div class="options-list" id="options-list"></div>
+      <div class="q-nav">
+        <button class="btn-nav" id="btn-prev" onclick="prevQuestion()" disabled>
+          ← <span class="ru">Назад</span><span class="kz">Артқа</span>
+        </button>
+        <button class="btn-nav btn-next" id="btn-next" onclick="nextQuestion()" disabled>
+          <span class="ru">Далее</span><span class="kz">Келесі</span> →
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ══════════════ FORM ══════════════ -->
+  <div class="screen" id="screen-form">
+    <div class="site-header">
+      <i class="bi bi-flower1 welcome-flower"></i>
+    </div>
+    <div class="form-card">
+      <h2 class="form-heading">
+        <span class="ru">Почти <em>готово!</em></span>
+        <span class="kz">Дерлік <em>дайын!</em></span>
+      </h2>
+      <p class="form-sub">
+        <span class="ru">Заполни форму, чтобы получить свой результат</span>
+        <span class="kz">Нәтижені алу үшін форманы толтыр</span>
+      </p>
+
+      <div class="form-row">
+        <div class="form-group">
+          <label class="form-label">
+            <span class="ru">Имя</span><span class="kz">Аты</span>
+          </label>
+          <input class="form-input" id="f-name" type="text" placeholder="Айгерим" />
+        </div>
+        <div class="form-group">
+          <label class="form-label">
+            <span class="ru">Возраст</span><span class="kz">Жасы</span>
+          </label>
+          <input class="form-input" id="f-age" type="number" placeholder="28" min="16" max="60" />
+        </div>
+      </div>
+      <div class="form-group">
+        <label class="form-label">
+          <span class="ru">Срок беременности (недель)</span>
+          <span class="kz">Жүктілік мерзімі (аптасы)</span>
+        </label>
+        <input class="form-input" id="f-term" type="number" placeholder="24" min="1" max="42" />
+      </div>
+      <div class="form-group">
+        <label class="form-label">Email</label>
+        <input class="form-input" id="f-email" type="email" placeholder="name@example.com" />
+      </div>
+      <div class="form-group">
+        <label class="form-label">
+          <span class="ru">Номер телефона</span>
+          <span class="kz">Телефон нөмірі</span>
+        </label>
+        <input class="form-input" id="f-phone" type="tel" placeholder="+7 777 000 00 00" />
+      </div>
+
+      <div class="form-privacy">
+        <i class="bi bi-lock-fill"></i> <span class="ru">Данные используются только для отправки результата. Мы не передаём их третьим лицам.</span>
+        <span class="kz">Деректер тек нәтіжені жіберу үшін қолданылады. Біз оларды үшінші тараптарға бермейміз.</span>
+      </div>
+
+      <button class="btn-submit" id="btn-submit" onclick="submitForm()">
+        <span class="ru">Узнать мой результат <i class="bi bi-flower1"></i></span>
+        <span class="kz">Менің нәтижемді білу <i class="bi bi-flower1"></i></span>
+      </button>
+      <p class="sending-msg" id="sending-msg">
+        <span class="ru">Отправляем... <i class="bi bi-arrow-repeat"></i></span>
+        <span class="kz">Жіберіп жатырмыз... <i class="bi bi-arrow-repeat"></i></span>
+      </p>
+    </div>
+  </div>
+
+  <!-- ══════════════ RESULT ══════════════ -->
+  <div class="screen" id="screen-result">
+    <div class="result-card" id="result-card">
+      <div class="confetti-row" id="result-confetti"></div>
+      <div class="result-badge" id="result-badge"></div>
+      <div class="result-image-wrap" id="result-image-wrap" style="display:none;">
+        <img id="result-image" alt="Result image" />
+      </div>
+      <span class="result-icon" id="result-icon"></span>
+      <div class="result-name-msg" id="result-name-msg"></div>
+      <h2 class="result-type" id="result-type"></h2>
+      <p class="result-tagline" id="result-tagline"></p>
+      <div class="result-divider"></div>
+      <p class="result-desc" id="result-desc"></p>
+      <div class="strengths-wrap">
+        <div class="strength-box plus">
+          <span class="strength-label ru">✨ Сильные стороны</span>
+          <span class="strength-label kz">✨ Күшті жақтары</span>
+          <p class="strength-text" id="result-plus"></p>
+        </div>
+        <div class="strength-box minus">
+          <span class="strength-label ru">💭 Над чем поработать</span>
+          <span class="strength-label kz">💭 Жетілдіру керек</span>
+          <p class="strength-text" id="result-minus"></p>
+        </div>
+      </div>
+      <button class="btn-restart" onclick="restart()">
+        <span class="ru">Пройти ещё раз <i class="bi bi-arrow-clockwise"></i></span>
+        <span class="kz">Қайта тапсыру <i class="bi bi-arrow-clockwise"></i></span>
+      </button>
+    </div>
+  </div>
+
+  <div class="footer-note">
+    <span class="ru">Сделано с любовью для будущих мам <i class="bi bi-heart-fill"></i></span>
+    <span class="kz">Болашақ аналарға сүйіспеншілікпен жасалды <i class="bi bi-heart-fill"></i></span>
+  </div>
+
+      <!-- Sponsor Banner Bottom (Mobile) -->
+      <div class="sponsor-banner-bottom">
+        <div class="sponsor-banner-title">
+          <span class="ru">Партнёрские размещения</span>
+          <span class="kz">Серіктестік орналастырулар</span>
+        </div>
+        <div class="sponsor-banner-items">
+          <div class="sponsor-banner-item" onclick="openSponsorLink(4)">
+            <span class="ru">Спецпредложение для вашей аудитории</span>
+            <span class="kz">Аудиторияңызға арналған арнайы ұсыныс</span>
+          </div>
+          <div class="sponsor-banner-item" onclick="openSponsorLink(5)">
+            <span class="ru">Добавьте сюда свой баннер</span>
+            <span class="kz">Өз баннеріңізді осында орналастырыңыз</span>
+          </div>
+          <div class="sponsor-banner-item" onclick="openSponsorLink(6)">
+            <span class="ru">Свяжитесь для размещения рекламы</span>
+            <span class="kz">Жарнама орналастыру үшін хабарласыңыз</span>
+          </div>
+        </div>
+      </div>
+
+    </div>
+
+    <!-- Right Sponsor Panel (Desktop) -->
+    <div class="sponsor-panel right">
+      <div class="sponsor-items">
+        <div class="sponsor-item" onclick="openSponsorLink(3)">
+          <span class="sponsor-label">
+            <span class="ru">Рекламное место доступно</span>
+            <span class="kz">Жарнама орны бос</span>
+          </span>
+        </div>
+        <div class="sponsor-item" onclick="openSponsorLink(4)">
+          <span class="sponsor-label">
+            <span class="ru">Разместите предложение здесь</span>
+            <span class="kz">Ұсынысыңызды осында орналастырыңыз</span>
+          </span>
+        </div>
+      </div>
+    </div>
+
+  </div>
+
+</div>
+
+<script>
+// Sponsor links (add your sponsor URLs here)
+const sponsorLinks = {
+  1: 'https://example.com/sponsor1',
+  2: 'https://example.com/sponsor2',
+  3: 'https://example.com/sponsor3',
+  4: 'https://example.com/sponsor4',
+  5: 'https://example.com/sponsor5',
+  6: 'https://example.com/sponsor6',
+};
+
+function openSponsorLink(id) {
+  if (sponsorLinks[id]) {
+    window.open(sponsorLinks[id], '_blank');
+  }
+}
+// ════════════════════════════════════════
+//  EMAILJS CONFIG — замените на свои ключи
+// ════════════════════════════════════════
+const EMAILJS_SERVICE_ID  = 'YOUR_SERVICE_ID';   // ← заменить
+const EMAILJS_TEMPLATE_ID = 'YOUR_TEMPLATE_ID';  // ← заменить
+const EMAILJS_PUBLIC_KEY  = 'YOUR_PUBLIC_KEY';   // ← заменить
+const NOTIFY_EMAIL        = 'YOUR_EMAIL@gmail.com'; // ← ваша почта
+const SHEETS_WEBHOOK_URL  = 'YOUR_GOOGLE_APPS_SCRIPT_WEBHOOK_URL'; // ← URL из Google Apps Script
+
+emailjs.init(EMAILJS_PUBLIC_KEY);
+
+// ════════════════════════════════════════
+//  QUESTIONS  (A=идеальная B=классная C=беспокойная)
+// ════════════════════════════════════════
+const questions = [
+  {
+    ru: 'Когда придёт время ехать в роддом:',
+    kz: 'Туу үйіне баратын уақыт келгенде:',
+    image: 'images/q1-pacifier.jpg',
+    options: [
+      { ru: 'Вы соберёте вещи в последнюю минуту.', kz: 'Заттарды соңғы минутта жинайсыз.', type: 'B' },
+      { ru: 'Вы всё приготовили за несколько недель до.', kz: 'Барлығын бірнеше апта бұрын дайындадыңыз.', type: 'A' },
+      { ru: 'Вы всё приготовили несколько месяцев назад.', kz: 'Барлығын бірнеше ай бұрын дайындадыңыз.', type: 'C' },
+    ]
+  },
+  {
+    ru: 'Вы будете кормить ребёнка грудью:',
+    kz: 'Баланы емізумен:',
+    image: 'images/q2-breastfeeding.jpg',
+    options: [
+      { ru: 'До тех пор, пока он об этом просит.', kz: 'Ол сұраған уақытқа дейін.', type: 'B' },
+      { ru: 'До выхода на работу.', kz: 'Жұмысқа шыққанға дейін.', type: 'A' },
+      { ru: 'Всего несколько дней: вы беспокоитесь, что у вас мало молока.', kz: 'Тек бірнеше күн: сүтіңіз аз деп алаңдайсыз.', type: 'C' },
+    ]
+  },
+  {
+    ru: 'В 8 месяцев:',
+    kz: '8 айда:',
+    image: 'images/q3-baby-feeding.jpg',
+    options: [
+      { ru: 'Вы будете давать малышу детское питание, купленное в магазине.', kz: 'Балаға дүкеннен сатып алынған тағамды бересіз.', type: 'B' },
+      { ru: 'Вы будете чередовать магазинное и домашнее питание.', kz: 'Дүкендік және үй тағамын кезектестіресіз.', type: 'A' },
+      { ru: 'Каждый раз вы сами будете готовить ему овощное пюре.', kz: 'Әр жолы өзіңіз оған көкөніс пюресін дайындайсыз.', type: 'C' },
+    ]
+  },
+  {
+    ru: 'Фотоальбом вашего ребёнка будет:',
+    kz: 'Баланың фотоальбомы:',
+    image: 'images/q4-baby-milestone.jpg',
+    options: [
+      { ru: 'Похож на коробку из-под обуви, в которой все фотографии свалены в кучу.', kz: 'Барлық фотолар үйіліп тұрған аяқ киім қорабына ұқсас болады.', type: 'B' },
+      { ru: 'Отражать только самые важные события (день рождения, Рождество).', kz: 'Тек ең маңызды оқиғаларды (туған күн, мерекелерді) көрсетеді.', type: 'A' },
+      { ru: 'Заполнен фотоснимками, маленькими воспоминаниями, комментариями.', kz: 'Фотосуреттермен, кішкентай естеліктермен, түсіндірмелермен толтырылған.', type: 'C' },
+    ]
+  },
+  {
+    ru: 'Вашему малышу — 11 месяцев. Ночью у него внезапно поднимается температура. Вы:',
+    kz: 'Балаңыз 11 айлық. Түнде оның температурасы кенет көтеріледі. Сіз:',
+    image: 'images/q5-temperature.jpg',
+    options: [
+      { ru: 'Дадите ему детскую дозу парацетамола и вернётесь в постель.', kz: 'Балалық доза парацетамол бересіз және ұйқыға оралатын боласыз.', type: 'B' },
+      { ru: 'Дадите ему детскую дозу парацетамола и останетесь рядом, пока не спадёт температура.', kz: 'Парацетамол бересіз және температура түскенше қасында қаласыз.', type: 'A' },
+      { ru: 'Немедленно вызовете своего педиатра.', kz: 'Дереу педиатрыңызды шақырасыз.', type: 'C' },
+    ]
+  },
+  {
+    ru: 'В 5 часов утра ваш шестимесячный кроха начинает кричать:',
+    kz: 'Таңғы 5-те алты айлық сәбиіңіз жылай бастайды:',
+    image: 'images/q6-mother-baby.jpg',
+    options: [
+      { ru: 'Вы возьмёте малыша в свою постель до конца ночи.', kz: 'Баланы түннің соңына дейін өз төсегіңізге аласыз.', type: 'B' },
+      { ru: 'Вы подождёте несколько минут, прежде чем подойти, а затем объясните ему, что нужно спать.', kz: 'Бірнеше минут күтіп, содан соң ұйқы керек екенін түсіндіресіз.', type: 'A' },
+      { ru: 'Вы подойдёте к нему и останетесь рядом, пока он не уснёт.', kz: 'Қасына барып, ол ұйықтағанша жанында қаласыз.', type: 'C' },
+    ]
+  },
+  {
+    ru: 'Что вы сделаете, если ваш ребёнок уронит соску на пол?',
+    kz: 'Балаңыз емізігін еденге тастап жіберсе, не істейсіз?',
+    image: 'images/q7-pacifier.jpg',
+    options: [
+      { ru: 'Вытрете её бумажным носовым платком.', kz: 'Қағаз орамалмен сүртесіз.', type: 'B' },
+      { ru: 'Сполоснете водой.', kz: 'Сумен шаясыз.', type: 'A' },
+      { ru: 'Немедленно вымоете её горячей водой, после чего стерилизуете.', kz: 'Дереу ыстық сумен жуып, стерилдейсіз.', type: 'C' },
+    ]
+  },
+  {
+    ru: 'Ваш девятимесячный малыш хватается за предметы мебели, норовит всё потрогать:',
+    kz: 'Тоғыз айлық балаңыз жиһаздарға жармасады, бәрін ұстап көргісі келеді:',
+    image: 'images/q8-baby-toys.jpg',
+    options: [
+      { ru: 'Вы позволите ему это делать, ведь он открывает для себя мир!', kz: 'Оған рұқсат бересіз, өйткені ол әлемді ашады!', type: 'B' },
+      { ru: 'Вы будете говорить ему «нельзя» всякий раз, когда он подойдёт к чему-то опасному.', kz: 'Қауіпті нәрсеге жақындаған сайын «болмайды» дейсіз.', type: 'A' },
+      { ru: 'Вы заранее расчистили всё пространство, опасаясь, что он поранится.', kz: 'Жарақат алып қалмасын деп барлық кеңістікті алдын ала тазалап қойдыңыз.', type: 'C' },
+    ]
+  },
+  {
+    ru: 'Игрушки, которые вы будете покупать для своего ребёнка:',
+    kz: 'Балаңызға сатып алатын ойыншықтар:',
+    image: 'images/q9-toys.jpg',
+    options: [
+      { ru: 'Создают меньше всего шума.', kz: 'Ең аз шу шығаратындар.', type: 'B' },
+      { ru: 'Развлекают его больше всего.', kz: 'Оны ең қызықтыратындар.', type: 'A' },
+      { ru: 'Наиболее обучающие.', kz: 'Ең оқытатындары.', type: 'C' },
+    ]
+  },
+  {
+    ru: 'На первый день рождения вашего малыша вы:',
+    kz: 'Балаңыздың бірінші туған күнінде сіз:',
+    image: 'images/q10-birthday.jpg',
+    options: [
+      { ru: 'Поставите одну свечу в пирожное и сделаете фотографии.', kz: 'Тортқа бір шырпы қойып, суретке түсесіз.', type: 'B' },
+      { ru: 'Испечёте сладкий пирог и позовёте друзей.', kz: 'Тәтті пирог пісіріп, достарды шақырасыз.', type: 'A' },
+      { ru: 'Будете готовиться к празднованию три дня.', kz: 'Үш күн бойы мерекеге дайындаласыз.', type: 'C' },
+    ]
+  }
+];
+
+// ════════════════════════════════════════
+//  RESULTS
+// ════════════════════════════════════════
+const results = {
+  A: {
+    theme: 'theme-ideal',
+    icon: '<i class="bi bi-crown"></i>',
+    confetti: '<i class="bi bi-flower1"></i><i class="bi bi-heart-fill"></i><i class="bi bi-flower1"></i><i class="bi bi-heart-fill"></i><i class="bi bi-flower1"></i>',
+    badge: { ru: '★ Идеальная мама', kz: '★ Мінсіз ана' },
+    type: { ru: '«Идеальная» мама', kz: '«Мінсіз» ана' },
+    tagline: { ru: 'Мама, «которая делает всё как надо»', kz: 'Барлығын дұрыс жасайтын ана' },
+    desc: {
+      ru: 'Такая мама прилагает немало усилий, чтобы во всём преуспеть. Она постоянно пытается найти золотую середину: строга, восторженна, но в меру; предусмотрительна, но не паникёрша; организованна, но без фанатизма. Она не тревожится по пустякам. Наверняка у неё уже имеется небольшой опыт общения с детьми. У неё строгие принципы, при этом она умеет быть гибкой.',
+      kz: 'Мұндай ана барлығынан үздік болу үшін көп күш салады. Ол үнемі алтын орталықты табуға тырысады: қатал, бірақ шектен шықпайды; ұқыпты, бірақ паникаға түспейді; ұйымшыл, бірақ фанатизмсіз. Ол ұсақ-түйекке алаңдамайды. Оның балалармен қарым-қатынас тәжірибесі бар.',
+    },
+    plus: { ru: 'Придерживается золотой середины и старается следовать принципам здравого смысла.', kz: 'Алтын орталықты ұстанады және ақыл-ой принциптерін ұстауға тырысады.' },
+    minus: { ru: 'Методы хороши, но возможно, несколько старомодны.', kz: 'Әдістері жақсы, бірақ біраз ескірген болуы мүмкін.' },
+  },
+  B: {
+    theme: 'theme-cool',
+    icon: '<i class="bi bi-sun"></i>',
+    confetti: '<i class="bi bi-leaf"></i><i class="bi bi-flower1"></i><i class="bi bi-leaf"></i><i class="bi bi-flower1"></i><i class="bi bi-leaf"></i>',
+    badge: { ru: '✦ Классная мама', kz: '✦ Керемет ана' },
+    type: { ru: '«Классная» мама', kz: '«Керемет» ана' },
+    tagline: { ru: 'Сторонница свободного воспитания', kz: 'Еркін тәрбиенің жақтастысы' },
+    desc: {
+      ru: 'Такая мама — это женщина, следующая своим инстинктам. У неё нет чётко выраженных принципов воспитания. Она не стремится быть хорошей хозяйкой: если малыш не хочет обедать — пусть поест чипсов. Она жизнерадостна и энергична, и её ребёнок расцветает рядом с ней, как подсолнух в поле.',
+      kz: 'Мұндай ана — өз инстинкттерін ұстанатын әйел. Оның тәрбие принциптері анық емес. Ол үй шаруашылығын жақсы жүргізуге тырыспайды: бала түскі ас ішкісі келмесе — чипс жесін. Ол жанды және қуатты, оның баласы да оның қасында гүлдейді.',
+    },
+    plus: { ru: 'Жизнерадостность, энергичность. Ребёнок расцветает рядом с ней!', kz: 'Жадырақтылық, қуат. Бала оның қасында гүлденеді!' },
+    minus: { ru: 'Некоторая беспечность, в частности в плане безопасности и гигиены питания.', kz: 'Белгілі бір немқұрайлылық, әсіресе қауіпсіздік пен тамақ гигиенасы жағынан.' },
+  },
+  C: {
+    theme: 'theme-worried',
+    icon: '<i class="bi bi-heart-pulse"></i>',
+    confetti: '<i class="bi bi-heart-fill"></i><i class="bi bi-flower2"></i><i class="bi bi-heart-fill"></i><i class="bi bi-flower2"></i><i class="bi bi-heart-fill"></i>',
+    badge: { ru: '♡ Беспокойная мама', kz: '♡ Алаңдаушы ана' },
+    type: { ru: '«Беспокойная» мама', kz: '«Алаңдаушы» ана' },
+    tagline: { ru: 'Если дело касается крохи — её тревога не знает границ', kz: 'Нәрестеге келгенде — оның алаңдауы шексіз' },
+    desc: {
+      ru: 'Она хочет сделать всё как надо, но не может избавиться от тревоги: почему он не съел всё из бутылочки? Почему капризничает? Бедняжка постоянно терзает себя вопросами, и ребёнок рано или поздно начинает это осознавать. Она слишком сильно опекает его, буквально трясётся над ним, усложняет себе жизнь вопросами о том, хорошая ли она мать.',
+      kz: 'Ол барлығын дұрыс жасағысы келеді, бірақ алаңдаудан арыла алмайды: ол неге бәрін ішпеді? Неге тентектік жасайды? Кедей үнемі өзін-өзі сұрақтармен азаптайды, және бала ерте ме, кеш пе оны сезінеді. Ол баланы тым қатты қолдайды, өзін жақсы ана болып тұрмын ба деп алаңдайды.',
+    },
+    plus: { ru: 'Гигиена питания, чистоплотность. Безопасность ребёнка на высоте!', kz: 'Тамақ гигиенасы, тазалық. Баланың қауіпсіздігі ең жоғары деңгейде!' },
+    minus: { ru: 'При нервной матери ребёнок тоже становится нервным.', kz: 'Жүйкелі ана болса, бала да жүйкелі болады.' },
+  }
+};
+
+// ════════════════════════════════════════
+//  STATE
+// ════════════════════════════════════════
+let currentQ = 0;
+let answers = new Array(10).fill(null); // stores type char A/B/C
+let currentLang = 'ru';
+let userData = {};
+
+function t(obj) { return obj[currentLang] || obj['ru']; }
+
+const FORM_LIMITS = {
+  minAge: 16,
+  maxAge: 60,
+  minTerm: 1,
+  maxTerm: 42
+};
+
+// ════════════════════════════════════════
+//  LANG
+// ════════════════════════════════════════
+function setLang(lang) {
+  currentLang = lang;
+  document.body.className = 'lang-' + lang;
+  document.querySelectorAll('.lang-btn').forEach(b => b.classList.remove('active'));
+  document.querySelector(`.lang-btn[onclick="setLang('${lang}')"]`).classList.add('active');
+  if (document.getElementById('screen-question').classList.contains('active')) {
+    renderQuestion();
+  }
+}
+
+// ════════════════════════════════════════
+//  NAVIGATION
+// ════════════════════════════════════════
+function showScreen(id) {
+  document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+  document.getElementById(id).classList.add('active');
+}
+
+function startQuiz() {
+  currentQ = 0;
+  answers = new Array(10).fill(null);
+  renderDots();
+  renderQuestion();
+  showScreen('screen-question');
+}
+
+function restart() {
+  currentQ = 0;
+  answers = new Array(10).fill(null);
+  showScreen('screen-welcome');
+}
+
+// ════════════════════════════════════════
+//  DOTS
+// ════════════════════════════════════════
+function renderDots() {
+  const row = document.getElementById('dots-row');
+  row.innerHTML = '';
+  for (let i = 0; i < questions.length; i++) {
+    const d = document.createElement('div');
+    d.className = 'dot';
+    if (i < currentQ) d.classList.add('done');
+    else if (i === currentQ) d.classList.add('current');
+    row.appendChild(d);
+  }
+}
+
+// ════════════════════════════════════════
+//  RENDER QUESTION
+// ════════════════════════════════════════
+function renderQuestion() {
+  const q = questions[currentQ];
+  const total = questions.length;
+
+  document.getElementById('q-counter').textContent = `${currentQ + 1} / ${total}`;
+  document.getElementById('q-number-label').textContent =
+    currentLang === 'kz'
+      ? `Сұрақ ${String(currentQ+1).padStart(2,'0')}`
+      : `Вопрос ${String(currentQ+1).padStart(2,'0')}`;
+
+  // Add image if available
+  const questionCard = document.querySelector('.question-card');
+  let imageWrap = questionCard.querySelector('.q-image-wrap');
+  
+  if (!imageWrap) {
+    imageWrap = document.createElement('div');
+    imageWrap.className = 'q-image-wrap';
+    questionCard.insertBefore(imageWrap, document.getElementById('q-text'));
+  }
+  
+  if (q.image) {
+    imageWrap.style.display = 'flex';
+    const imageAltText = currentLang === 'kz' ? `Сұрақ ${currentQ + 1}` : `Вопрос ${currentQ + 1}`;
+    imageWrap.innerHTML = `<img alt="${imageAltText}" />`;
+    const imgEl = imageWrap.querySelector('img');
+    setQuestionImage(imgEl, q.image, imageWrap);
+  } else {
+    imageWrap.style.display = 'none';
+  }
+
+  document.getElementById('q-text').textContent = t(q);
+
+  const fill = document.getElementById('progress-fill');
+  fill.style.width = ((currentQ + 1) / total * 100) + '%';
+
+  const list = document.getElementById('options-list');
+  list.innerHTML = '';
+  q.options.forEach((opt, i) => {
+    const btn = document.createElement('button');
+    btn.className = 'option-btn' + (answers[currentQ] === opt.type ? ' selected' : '');
+    btn.innerHTML = `<div class="option-dot"></div><span class="option-text">${t(opt)}</span>`;
+    btn.onclick = () => selectOption(opt.type, btn);
+    list.appendChild(btn);
+  });
+
+  document.getElementById('btn-prev').disabled = currentQ === 0;
+  document.getElementById('btn-next').disabled = answers[currentQ] === null;
+
+  renderDots();
+}
+
+function getImageCandidates(originalPath) {
+  if (!originalPath || typeof originalPath !== 'string') return [];
+  const lastDot = originalPath.lastIndexOf('.');
+  const base = lastDot > -1 ? originalPath.slice(0, lastDot) : originalPath;
+  return [
+    `${base}.jpg`,
+    `${base}.jpeg`,
+    `${base}.png`,
+    `${base}.webp`
+  ];
+}
+
+function showImageFallback(container) {
+  const text = currentLang === 'kz'
+    ? 'Сурет табылмады. Оны images/ бумасына қосыңыз.'
+    : 'Изображение не найдено. Добавьте его в папку images/.';
+  container.innerHTML = `<div class="q-image-fallback">${text}</div>`;
+}
+
+function setQuestionImage(imgEl, imagePath, container) {
+  const candidates = getImageCandidates(imagePath);
+  let idx = 0;
+
+  function tryNext() {
+    if (idx >= candidates.length) {
+      showImageFallback(container);
+      return;
+    }
+    imgEl.src = candidates[idx];
+    idx++;
+  }
+
+  imgEl.onerror = tryNext;
+  imgEl.onload = () => {
+    imgEl.onerror = null;
+    imgEl.onload = null;
+  };
+  tryNext();
+}
+
+function getResultImageCandidates(resultKey) {
+  const byKey = {
+    A: [
+      'images/mom-a.jpg',
+      'images/mom-a.jpeg',
+      'images/mom-a.png',
+      'images/mom-a.webp',
+      'images/ideal-mom.jpg',
+      'images/ideal-mom.jpeg',
+      'images/ideal-mom.png',
+      'images/ideal-mom.webp'
+    ],
+    B: [
+      'images/mom-b.jpg',
+      'images/mom-b.jpeg',
+      'images/mom-b.png',
+      'images/mom-b.webp',
+      'images/cool-mom.jpg',
+      'images/cool-mom.jpeg',
+      'images/cool-mom.png',
+      'images/cool-mom.webp'
+    ],
+    C: [
+      'images/mom-c.jpg',
+      'images/mom-c.jpeg',
+      'images/mom-c.png',
+      'images/mom-c.webp',
+      'images/worry-mom.jpg',
+      'images/worry-mom.jpeg',
+      'images/worry-mom.png',
+      'images/worry-mom.webp',
+      'images/worried-mom.jpg',
+      'images/worried-mom.jpeg',
+      'images/worried-mom.png',
+      'images/worried-mom.webp'
+    ]
+  };
+  return byKey[resultKey] || [];
+}
+
+function setResultImage(resultKey) {
+  const wrap = document.getElementById('result-image-wrap');
+  const img = document.getElementById('result-image');
+  const candidates = getResultImageCandidates(resultKey);
+  let idx = 0;
+
+  function hideImage() {
+    wrap.style.display = 'none';
+    img.removeAttribute('src');
+    img.onerror = null;
+    img.onload = null;
+  }
+
+  function tryNext() {
+    if (idx >= candidates.length) {
+      hideImage();
+      return;
+    }
+    img.src = candidates[idx];
+    idx++;
+  }
+
+  if (!candidates.length) {
+    hideImage();
+    return;
+  }
+
+  wrap.style.display = 'flex';
+  img.onerror = tryNext;
+  img.onload = () => {
+    img.onerror = null;
+    img.onload = null;
+  };
+  tryNext();
+}
+
+function selectOption(type, clickedBtn) {
+  answers[currentQ] = type;
+  document.querySelectorAll('.option-btn').forEach(b => b.classList.remove('selected'));
+  clickedBtn.classList.add('selected');
+  document.getElementById('btn-next').disabled = false;
+}
+
+function nextQuestion() {
+  if (answers[currentQ] === null) return;
+  if (currentQ < questions.length - 1) {
+    currentQ++;
+    renderQuestion();
+  } else {
+    showScreen('screen-form');
+  }
+}
+
+function prevQuestion() {
+  if (currentQ > 0) {
+    currentQ--;
+    renderQuestion();
+  }
+}
+
+// ════════════════════════════════════════
+//  FORM VALIDATION HELPERS
+// ════════════════════════════════════════
+function normalizeName(name) {
+  return name.replace(/\s+/g, ' ').trim();
+}
+
+function isValidName(name) {
+  const normalized = normalizeName(name);
+  if (normalized.length < 2 || normalized.length > 40) return false;
+  if (/\d/.test(normalized)) return false;
+  return /^[A-Za-zА-Яа-яЁёӘәҒғҚқҢңӨөҰұҮүІіҺһ' -]+$/.test(normalized);
+}
+
+function normalizePhone(rawValue) {
+  let digits = rawValue.replace(/\D/g, '');
+  if (!digits) return '';
+  if (digits.startsWith('8')) digits = '7' + digits.slice(1);
+  if (!digits.startsWith('7')) digits = '7' + digits;
+  digits = digits.slice(0, 11);
+
+  const cc = digits.slice(0, 1);
+  const p1 = digits.slice(1, 4);
+  const p2 = digits.slice(4, 7);
+  const p3 = digits.slice(7, 9);
+  const p4 = digits.slice(9, 11);
+
+  let formatted = `+${cc}`;
+  if (p1) formatted += ` ${p1}`;
+  if (p2) formatted += ` ${p2}`;
+  if (p3) formatted += ` ${p3}`;
+  if (p4) formatted += ` ${p4}`;
+  return formatted;
+}
+
+function isValidPhone(phone) {
+  const digits = phone.replace(/\D/g, '');
+  return /^7\d{10}$/.test(digits);
+}
+
+function isLikelyValidEmail(email) {
+  const normalized = email.toLowerCase().trim();
+  const basicPattern = /^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/;
+  if (!basicPattern.test(normalized)) return false;
+  if (normalized.includes('..')) return false;
+
+  const parts = normalized.split('@');
+  if (parts.length !== 2) return false;
+  const [local, domain] = parts;
+  if (!local || local.length > 64) return false;
+  if (!domain || domain.length > 255) return false;
+  if (!domain.includes('.')) return false;
+
+  // Common typo domains that are usually invalid.
+  const blockedDomains = [
+    'gmal.com', 'gmial.com', 'gmai.com', 'gmail.co',
+    'yadnex.ru', 'yandex.r', 'mail.r', 'outlok.com',
+    'hotnail.com', 'icloud.con'
+  ];
+  return !blockedDomains.includes(domain);
+}
+
+function showFieldError(input, messageRu, messageKz) {
+  const message = currentLang === 'kz' ? messageKz : messageRu;
+  input.setCustomValidity(message);
+  input.reportValidity();
+  input.focus();
+}
+
+function clearFieldError(input) {
+  input.setCustomValidity('');
+}
+
+// ════════════════════════════════════════
+//  CALCULATE RESULT
+// ════════════════════════════════════════
+function calcResult() {
+  const counts = { A: 0, B: 0, C: 0 };
+  answers.forEach(a => { if (a) counts[a]++; });
+  return Object.keys(counts).reduce((a, b) => counts[a] >= counts[b] ? a : b);
+}
+
+// ════════════════════════════════════════
+//  FORM SUBMIT
+// ════════════════════════════════════════
+function submitForm() {
+  const nameInput = document.getElementById('f-name');
+  const ageInput = document.getElementById('f-age');
+  const termInput = document.getElementById('f-term');
+  const emailInput = document.getElementById('f-email');
+  const phoneInput = document.getElementById('f-phone');
+
+  const name  = normalizeName(nameInput.value);
+  const age   = ageInput.value.trim();
+  const term  = termInput.value.trim();
+  const email = emailInput.value.trim().toLowerCase();
+  const phone = normalizePhone(phoneInput.value.trim());
+
+  nameInput.value = name;
+  emailInput.value = email;
+  phoneInput.value = phone;
+
+  if (!name || !age || !term || !email || !phone) {
+    alert(currentLang === 'kz' ? 'Барлық өрістерді дұрыс толтырыңыз!' : 'Пожалуйста, заполните все поля корректно!');
+    return;
+  }
+  if (!isValidName(name)) {
+    showFieldError(
+      nameInput,
+      'Введите корректное имя (без цифр, 2-40 символов).',
+      'Дұрыс есім енгізіңіз (сансыз, 2-40 таңба).'
+    );
+    return;
+  }
+
+  const ageNum = Number(age);
+  if (!Number.isInteger(ageNum) || ageNum < FORM_LIMITS.minAge || ageNum > FORM_LIMITS.maxAge) {
+    showFieldError(
+      ageInput,
+      `Возраст должен быть от ${FORM_LIMITS.minAge} до ${FORM_LIMITS.maxAge} лет.`,
+      `Жас ${FORM_LIMITS.minAge} бен ${FORM_LIMITS.maxAge} аралығында болуы керек.`
+    );
+    return;
+  }
+
+  const termNum = Number(term);
+  if (!Number.isInteger(termNum) || termNum < FORM_LIMITS.minTerm || termNum > FORM_LIMITS.maxTerm) {
+    showFieldError(
+      termInput,
+      `Срок беременности должен быть от ${FORM_LIMITS.minTerm} до ${FORM_LIMITS.maxTerm} недель.`,
+      `Жүктілік мерзімі ${FORM_LIMITS.minTerm}-${FORM_LIMITS.maxTerm} апта аралығында болуы керек.`
+    );
+    return;
+  }
+
+  if (!isLikelyValidEmail(email)) {
+    showFieldError(
+      emailInput,
+      'Введите корректный email (пример: name@example.com).',
+      'Дұрыс email енгізіңіз (мысалы: name@example.com).'
+    );
+    return;
+  }
+
+  if (!isValidPhone(phone)) {
+    showFieldError(
+      phoneInput,
+      'Введите корректный номер в формате +7 XXX XXX XX XX.',
+      'Нөмірді +7 XXX XXX XX XX форматында енгізіңіз.'
+    );
+    return;
+  }
+
+  userData = { name, age, term, email, phone };
+  const resultKey = calcResult();
+  const resultData = results[resultKey];
+
+  const submitBtn = document.getElementById('btn-submit');
+  const sendingMsg = document.getElementById('sending-msg');
+  submitBtn.disabled = true;
+  sendingMsg.style.display = 'block';
+
+  // Build answers summary
+  const answersSummary = answers.map((a, i) => {
+    const q = questions[i];
+    const chosenOpt = q.options.find(o => o.type === a);
+    return `${i+1}. ${q.ru}\n→ ${chosenOpt ? chosenOpt.ru : '—'} [${a}]`;
+  }).join('\n\n');
+
+  const templateParams = {
+    to_email:      NOTIFY_EMAIL,
+    user_name:     name,
+    user_age:      age,
+    user_term:     term + ' нед.',
+    user_email:    email,
+    user_phone:    phone,
+    result_type:   resultData.type.ru,
+    answers_text:  answersSummary,
+    reply_to:      email,
+  };
+
+  const sheetPayload = buildSheetPayload({
+    name,
+    age,
+    term,
+    email,
+    phone,
+    resultKey,
+    resultType: resultData.type.ru,
+    answersSummary
+  });
+
+  Promise.allSettled([
+    emailjs.send(EMAILJS_SERVICE_ID, EMAILJS_TEMPLATE_ID, templateParams),
+    saveToSheets(sheetPayload)
+  ])
+    .then((resultsSettled) => {
+      const emailResult = resultsSettled[0];
+      const sheetResult = resultsSettled[1];
+
+      if (emailResult.status === 'rejected') {
+        console.error('EmailJS error:', emailResult.reason);
+      }
+      if (sheetResult.status === 'rejected') {
+        console.error('Sheets save error:', sheetResult.reason);
+      }
+
+      // Always show final result to user
+      showResult(resultKey, name);
+    })
+    .finally(() => {
+      submitBtn.disabled = false;
+      sendingMsg.style.display = 'none';
+    });
+}
+
+function buildSheetPayload({ name, age, term, email, phone, resultKey, resultType, answersSummary }) {
+  return {
+    submitted_at: new Date().toISOString(),
+    language: currentLang,
+    name,
+    age,
+    term_weeks: term,
+    email,
+    phone,
+    result_key: resultKey,
+    result_type: resultType,
+    answers: answersSummary
+  };
+}
+
+function saveToSheets(payload) {
+  if (!SHEETS_WEBHOOK_URL || SHEETS_WEBHOOK_URL.includes('YOUR_GOOGLE_APPS_SCRIPT_WEBHOOK_URL')) {
+    // Skip silently in development until URL is configured.
+    return Promise.resolve();
+  }
+
+  return fetch(SHEETS_WEBHOOK_URL, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify(payload)
+  }).then((response) => {
+    if (!response.ok) {
+      throw new Error(`Sheets webhook failed with status ${response.status}`);
+    }
+    return response.text();
+  });
+}
+
+// ════════════════════════════════════════
+//  FORM INPUT BEHAVIOR
+// ════════════════════════════════════════
+const nameInputEl = document.getElementById('f-name');
+const ageInputEl = document.getElementById('f-age');
+const termInputEl = document.getElementById('f-term');
+const emailInputEl = document.getElementById('f-email');
+const phoneInputEl = document.getElementById('f-phone');
+
+nameInputEl.addEventListener('input', () => {
+  nameInputEl.value = nameInputEl.value.replace(/[0-9]/g, '');
+  clearFieldError(nameInputEl);
+});
+
+ageInputEl.addEventListener('input', () => clearFieldError(ageInputEl));
+termInputEl.addEventListener('input', () => clearFieldError(termInputEl));
+
+emailInputEl.addEventListener('input', () => {
+  emailInputEl.value = emailInputEl.value.replace(/\s/g, '').toLowerCase();
+  clearFieldError(emailInputEl);
+});
+
+phoneInputEl.addEventListener('input', () => {
+  phoneInputEl.value = normalizePhone(phoneInputEl.value);
+  clearFieldError(phoneInputEl);
+});
+
+// ════════════════════════════════════════
+//  SHOW RESULT
+// ════════════════════════════════════════
+function showResult(key, name) {
+  const r = results[key];
+  const card = document.getElementById('result-card');
+
+  // Remove old themes
+  card.classList.remove('theme-ideal', 'theme-cool', 'theme-worried');
+  card.classList.add(r.theme);
+
+  document.getElementById('result-confetti').innerHTML = r.confetti;
+  document.getElementById('result-badge').textContent = t(r.badge);
+  document.getElementById('result-icon').innerHTML = r.icon;
+  document.getElementById('result-name-msg').textContent =
+    currentLang === 'kz'
+      ? `${name}, сенің нәтижең:`
+      : `${name}, твой результат:`;
+  document.getElementById('result-type').textContent = t(r.type);
+  document.getElementById('result-tagline').textContent = t(r.tagline);
+  document.getElementById('result-desc').textContent = t(r.desc);
+  document.getElementById('result-plus').textContent = t(r.plus);
+  document.getElementById('result-minus').textContent = t(r.minus);
+  setResultImage(key);
+
+  showScreen('screen-result');
+  window.scrollTo({ top: 0, behavior: 'smooth' });
+}
+</script>
+</body>
+</html>
