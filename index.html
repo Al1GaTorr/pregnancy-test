@@ -99,14 +99,14 @@
     width: 100%;
     max-width: 1400px;
     margin: 0 auto;
-    gap: 20px;
+    gap: 200px;
     position: relative;
     align-items: flex-start;
   }
 
   .sponsor-panel {
     display: none;
-    width: 160px;
+    width: 260px;
     position: sticky;
     top: 100px;
     height: fit-content;
@@ -124,21 +124,18 @@
 
   .sponsor-item {
     width: 100%;
-    aspect-ratio: 1;
-    background: linear-gradient(135deg, var(--cream), var(--blush));
-    border: 2px solid rgba(196,123,110,0.15);
-    border-radius: 12px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
+    height: auto; /* let image define height */
+    background: transparent; /* remove white card background */
+    border: none; /* remove border so only photo is visible */
+    border-radius: 0;
+    display: block;
     font-size: 48px;
     cursor: pointer;
     transition: all 0.3s ease;
     overflow: hidden;
     position: relative;
-    box-shadow: 0 2px 8px rgba(196,123,110,0.08);
     color: var(--deep-rose);
-    padding: 12px;
+    padding: 0; /* no inner padding */
     text-align: center;
   }
 
@@ -166,8 +163,12 @@
 
   .sponsor-item img {
     width: 100%;
-    height: 100%;
-    object-fit: cover;
+    height: auto;
+    display: block;
+    margin: 0 auto;
+    border-radius: 12px; /* keep rounded corners on the image itself */
+    object-fit: contain; /* ensure whole photo is visible */
+    background: transparent;
   }
 
   .sponsor-item a {
@@ -203,25 +204,23 @@
 
   .sponsor-banner-items {
     display: flex;
-    gap: 12px;
+    gap: 16px; /* slightly larger gap */
     overflow-x: auto;
     -webkit-overflow-scrolling: touch;
     padding-bottom: 2px;
   }
 
   .sponsor-banner-item {
-    flex: 0 0 180px;
-    min-height: 108px;
-    background: white;
-    border: 1px solid rgba(196,123,110,0.1);
-    border-radius: 8px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
+    flex: 0 0 260px;
+    height: auto; /* let image height flow naturally */
+    background: transparent; /* remove white card background */
+    border: none;
+    border-radius: 0;
+    display: block;
     font-size: 13px;
     line-height: 1.4;
     text-align: center;
-    padding: 12px;
+    padding: 0;
     cursor: pointer;
     transition: all 0.3s ease;
     color: var(--deep-rose);
@@ -234,9 +233,11 @@
 
   .sponsor-banner-item img {
     width: 100%;
-    height: 100%;
-    object-fit: cover;
+    height: auto; /* keep full image visible */
+    display: block;
+    object-position: center;
     border-radius: 6px;
+    background: #fff;
   }
 
   .sponsor-banner-item a {
@@ -551,6 +552,12 @@
     line-height: 1.6; margin-bottom: 32px;
   }
   .form-group { margin-bottom: 20px; }
+  .term-slider-wrap { display:flex; flex-direction:column; gap:8px; }
+  #f-term-slider { width:100%; accent-color: var(--deep-rose); }
+  .term-slider-row { display:flex; justify-content:space-between; align-items:center; }
+  .term-label { font-size:14px; color:var(--text-mid); font-weight:600; }
+  .term-marks { display:none; justify-content:space-between; font-size:12px; color:var(--text-light); margin-top:6px; gap:6px; }
+  .term-marks span { flex:1; text-align:center; }
   .form-label {
     display: block;
     font-size: 11px; font-weight: 700;
@@ -643,16 +650,18 @@
     justify-content: center;
     overflow: hidden;
     margin: 0 0 20px;
-    padding: 10px;
+    padding: 0; /* removed inner white padding to let image fill the card */
     box-shadow: 0 4px 16px rgba(196,123,110,0.12);
   }
   .result-image-wrap img {
     width: 100%;
-    height: 100%;
-    object-fit: contain;
+    height: auto;
+    max-height: 260px;
+    object-fit: cover;
     object-position: center;
-    border-radius: 10px;
-    background: #fff;
+    border-radius: 12px;
+    background: transparent;
+    display: block;
   }
   .result-type {
     font-family: 'Cormorant Garamond', serif;
@@ -772,7 +781,7 @@
     .sponsor-banner-bottom {
       display: block;
       margin: 10px 0;
-      padding: 10px;
+      padding: 6px;
     }
     .sponsor-panel {
       display: none !important;
@@ -795,10 +804,10 @@
     }
 
     .sponsor-banner-item {
-      flex: 0 0 150px;
-      min-height: 94px;
+      flex: 0 0 180px;
+      min-height: 0;
       font-size: 12px;
-      padding: 10px;
+      padding: 0;
     }
   }
 
@@ -826,6 +835,79 @@
   .kz { display: none; }
   .kz-inline { display: none; }
 </style>
+<style>
+/* Sponsor image styles — fullfit cover */
+.sponsor-item--img {
+  padding: 0 !important;
+  background: #fff !important;
+  display: flex !important;
+  align-items: stretch;
+  justify-content: stretch;
+  overflow: hidden;
+  border-radius: 12px;
+}
+.sponsor-img {
+  width: 100%;
+  height: auto; /* preserve full image */
+  object-fit: none;
+  object-position: center;
+  display: block;
+  border-radius: 12px;
+  transition: transform 0.3s ease;
+}
+.sponsor-item--img:hover .sponsor-img {
+  transform: scale(1.04);
+}
+.sponsor-banner-items--img {
+  display: flex;
+  gap: 12px;
+  padding: 0; /* remove extra inner padding to avoid empty slots */
+}
+  .sponsor-banner-item img {
+    width: 100%;
+    height: auto;
+    display: block;
+    margin: 0 auto;
+    border-radius: 12px; /* rounded corners on image */
+    object-fit: contain; /* show whole banner image */
+    transition: transform 0.3s ease;
+  }
+}
+.sponsor-banner-img {
+  width: 100%;
+  height: auto; /* show whole banner image */
+  object-fit: none;
+  object-position: center;
+  display: block;
+  transition: transform 0.3s ease;
+}
+.sponsor-banner-item--img:hover .sponsor-banner-img {
+  transform: scale(1.04);
+}
+
+/* Giraffe sponsor fullfit */
+.giraffe-sponsor {
+  display: none;
+  width: 100%;
+  margin: 12px 0 0;
+  border-radius: 14px;
+  overflow: hidden;
+  cursor: pointer;
+  box-shadow: 0 2px 12px rgba(0,0,0,0.10);
+}
+.giraffe-sponsor img {
+  width: 100%;
+  height: 130px;
+  object-fit: cover;
+  object-position: center;
+  display: block;
+  transition: transform 0.3s ease;
+}
+.giraffe-sponsor:hover img {
+  transform: scale(1.03);
+}
+#screen-question.active .giraffe-sponsor { display: block; }
+</style>
 </head>
 <body class="lang-ru">
 
@@ -843,17 +925,11 @@
   <div class="app-wrapper">
     <div class="sponsor-panel left">
       <div class="sponsor-items">
-        <div class="sponsor-item" onclick="openSponsorLink(1)">
-          <span class="sponsor-label">
-            <span class="ru">Здесь могла быть ваша реклама</span>
-            <span class="kz">Мұнда сіздің жарнамаңыз болуы мүмкін</span>
-          </span>
+        <div class="sponsor-item sponsor-item--img" onclick="openSponsorLink(1)">
+          <img src="images/reklama/Nutrilon.jpeg" alt="Nutrilon" class="sponsor-img" />
         </div>
-        <div class="sponsor-item" onclick="openSponsorLink(2)">
-          <span class="sponsor-label">
-            <span class="ru">Ваш бренд увидят будущие мамы</span>
-            <span class="kz">Сіздің брендіңізді болашақ аналар көреді</span>
-          </span>
+        <div class="sponsor-item sponsor-item--img" onclick="openSponsorLink(2)">
+          <img src="images/reklama/YokoSun.jpeg" alt="YokoSun" class="sponsor-img" />
         </div>
       </div>
     </div>
@@ -863,22 +939,15 @@
 
       <!-- Sponsor Banner Top (Mobile) -->
       <div class="sponsor-banner-top">
-        <div class="sponsor-banner-title">
-          <span class="ru">Рекламная панель</span>
-          <span class="kz">Жарнама панелі</span>
-        </div>
-        <div class="sponsor-banner-items">
-          <div class="sponsor-banner-item" onclick="openSponsorLink(1)">
-            <span class="ru">Здесь могла быть ваша реклама</span>
-            <span class="kz">Мұнда сіздің жарнамаңыз болуы мүмкін</span>
+        <div class="sponsor-banner-items sponsor-banner-items--img">
+          <div class="sponsor-banner-item sponsor-banner-item--img" onclick="openSponsorLink(1)">
+            <img src="images/reklama/Nutrilon.jpeg" alt="Nutrilon" class="sponsor-banner-img" />
           </div>
-          <div class="sponsor-banner-item" onclick="openSponsorLink(2)">
-            <span class="ru">Ваш продукт в поле внимания</span>
-            <span class="kz">Сіздің өніміңіз назарда болады</span>
+          <div class="sponsor-banner-item sponsor-banner-item--img" onclick="openSponsorLink(2)">
+            <img src="images/reklama/YokoSun.jpeg" alt="YokoSun" class="sponsor-banner-img" />
           </div>
-          <div class="sponsor-banner-item" onclick="openSponsorLink(3)">
-            <span class="ru">Забронируйте этот рекламный слот</span>
-            <span class="kz">Бұл жарнама орнын брондаңыз</span>
+          <div class="sponsor-banner-item sponsor-banner-item--img" onclick="openSponsorLink(3)">
+            <img src="images/reklama/Futari.jpeg" alt="Futari" class="sponsor-banner-img" />
           </div>
         </div>
       </div>
@@ -910,6 +979,27 @@
       </p>
     </div>
   </div>
+
+  <!-- Giraffe sponsor banner on quiz screen -->
+  <style>
+  .giraffe-sponsor {
+    display: none;
+    width: 100%;
+    margin: 8px 0;
+    border-radius: 12px;
+    overflow: hidden;
+    cursor: pointer;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+  }
+  .giraffe-sponsor img {
+    width: 100%;
+    height: auto;
+    display: block;
+    object-fit: cover;
+    max-height: 120px;
+  }
+  #screen-question.active .giraffe-sponsor { display: block; }
+  </style>
 
   <!-- ══════════════ QUESTION ══════════════ -->
   <div class="screen" id="screen-question">
@@ -944,6 +1034,9 @@
           <span class="ru">Далее</span><span class="kz">Келесі</span> →
         </button>
       </div>
+    </div>
+    <div class="giraffe-sponsor" onclick="openSponsorLink(6)">
+      <img src="images/reklama/Giraffee.jpeg" alt="Sponsor" />
     </div>
   </div>
 
@@ -981,12 +1074,16 @@
           <span class="ru">Срок беременности (недель)</span>
           <span class="kz">Жүктілік мерзімі (аптасы)</span>
         </label>
-        <input class="form-input" id="f-term" type="number" placeholder="24" min="1" max="42" />
+        <div class="term-slider-wrap">
+          <input type="range" id="f-term-slider" min="0" max="11" step="1" value="6" />
+          <div class="term-slider-row">
+            <div class="term-label" id="f-term-label">24 нед.</div>
+          </div>
+          <input class="form-input" id="f-term" type="number" placeholder="24" min="1" max="42" style="display:none;" />
+          <div class="term-marks" id="term-marks"></div>
+        </div>
       </div>
-      <div class="form-group">
-        <label class="form-label">Email</label>
-        <input class="form-input" id="f-email" type="email" placeholder="name@example.com" />
-      </div>
+      
       <div class="form-group">
         <label class="form-label">
           <span class="ru">Номер телефона</span>
@@ -1051,22 +1148,12 @@
 
       <!-- Sponsor Banner Bottom (Mobile) -->
       <div class="sponsor-banner-bottom">
-        <div class="sponsor-banner-title">
-          <span class="ru">Партнёрские размещения</span>
-          <span class="kz">Серіктестік орналастырулар</span>
-        </div>
-        <div class="sponsor-banner-items">
-          <div class="sponsor-banner-item" onclick="openSponsorLink(4)">
-            <span class="ru">Спецпредложение для вашей аудитории</span>
-            <span class="kz">Аудиторияңызға арналған арнайы ұсыныс</span>
+        <div class="sponsor-banner-items sponsor-banner-items--img">
+          <div class="sponsor-banner-item sponsor-banner-item--img" onclick="openSponsorLink(4)">
+            <img src="images/reklama/Tomiko.jpeg" alt="Tomiko" class="sponsor-banner-img" />
           </div>
-          <div class="sponsor-banner-item" onclick="openSponsorLink(5)">
-            <span class="ru">Добавьте сюда свой баннер</span>
-            <span class="kz">Өз баннеріңізді осында орналастырыңыз</span>
-          </div>
-          <div class="sponsor-banner-item" onclick="openSponsorLink(6)">
-            <span class="ru">Свяжитесь для размещения рекламы</span>
-            <span class="kz">Жарнама орналастыру үшін хабарласыңыз</span>
+          <div class="sponsor-banner-item sponsor-banner-item--img" onclick="openSponsorLink(5)">
+            <img src="images/reklama/Solgar.jpeg" alt="Solgar" class="sponsor-banner-img" />
           </div>
         </div>
       </div>
@@ -1076,17 +1163,11 @@
     <!-- Right Sponsor Panel (Desktop) -->
     <div class="sponsor-panel right">
       <div class="sponsor-items">
-        <div class="sponsor-item" onclick="openSponsorLink(3)">
-          <span class="sponsor-label">
-            <span class="ru">Рекламное место доступно</span>
-            <span class="kz">Жарнама орны бос</span>
-          </span>
+        <div class="sponsor-item sponsor-item--img" onclick="openSponsorLink(3)">
+          <img src="images/reklama/Futari.jpeg" alt="Futari" class="sponsor-img" />
         </div>
-        <div class="sponsor-item" onclick="openSponsorLink(4)">
-          <span class="sponsor-label">
-            <span class="ru">Разместите предложение здесь</span>
-            <span class="kz">Ұсынысыңызды осында орналастырыңыз</span>
-          </span>
+        <div class="sponsor-item sponsor-item--img" onclick="openSponsorLink(4)">
+          <img src="images/reklama/Solgar.jpeg" alt="Solgar" class="sponsor-img" />
         </div>
       </div>
     </div>
@@ -1283,6 +1364,8 @@ let currentQ = 0;
 let answers = new Array(10).fill(null); // stores type char A/B/C
 let currentLang = 'ru';
 let userData = {};
+let lastResultKey = null;
+let lastResultName = null;
 
 function t(obj) { return obj[currentLang] || obj['ru']; }
 
@@ -1301,8 +1384,14 @@ function setLang(lang) {
   document.body.className = 'lang-' + lang;
   document.querySelectorAll('.lang-btn').forEach(b => b.classList.remove('active'));
   document.querySelector(`.lang-btn[onclick="setLang('${lang}')"]`).classList.add('active');
+  // persist selection
+  try { localStorage.setItem('siteLang', lang); } catch(e){}
+
+  // Refresh visible screen content so translation applies everywhere
   if (document.getElementById('screen-question').classList.contains('active')) {
     renderQuestion();
+  } else if (document.getElementById('screen-result').classList.contains('active')) {
+    if (lastResultKey !== null) showResult(lastResultKey, lastResultName || '');
   }
 }
 
@@ -1626,20 +1715,17 @@ function submitForm() {
   const nameInput = document.getElementById('f-name');
   const ageInput = document.getElementById('f-age');
   const termInput = document.getElementById('f-term');
-  const emailInput = document.getElementById('f-email');
   const phoneInput = document.getElementById('f-phone');
 
   const name  = normalizeName(nameInput.value);
   const age   = ageInput.value.trim();
   const term  = termInput.value.trim();
-  const email = emailInput.value.trim().toLowerCase();
   const phone = normalizePhone(phoneInput.value.trim());
 
   nameInput.value = name;
-  emailInput.value = email;
   phoneInput.value = phone;
 
-  if (!name || !age || !term || !email || !phone) {
+  if (!name || !age || !term || !phone) {
     alert(currentLang === 'kz' ? 'Барлық өрістерді дұрыс толтырыңыз!' : 'Пожалуйста, заполните все поля корректно!');
     return;
   }
@@ -1672,14 +1758,7 @@ function submitForm() {
     return;
   }
 
-  if (!isLikelyValidEmail(email)) {
-    showFieldError(
-      emailInput,
-      'Введите корректный email (пример: name@example.com).',
-      'Дұрыс email енгізіңіз (мысалы: name@example.com).'
-    );
-    return;
-  }
+
 
   if (!isValidPhone(phone)) {
     showFieldError(
@@ -1690,7 +1769,7 @@ function submitForm() {
     return;
   }
 
-  userData = { name, age, term, email, phone };
+  userData = { name, age, term, phone };
   const resultKey = calcResult();
   const resultData = results[resultKey];
 
@@ -1711,18 +1790,15 @@ function submitForm() {
     user_name:     name,
     user_age:      age,
     user_term:     term + ' нед.',
-    user_email:    email,
     user_phone:    phone,
     result_type:   resultData.type.ru,
-    answers_text:  answersSummary,
-    reply_to:      email,
+    answers_text:  answersSummary
   };
 
   const sheetPayload = buildSheetPayload({
     name,
     age,
     term,
-    email,
     phone,
     resultKey,
     resultType: resultData.type.ru,
@@ -1753,14 +1829,13 @@ function submitForm() {
     });
 }
 
-function buildSheetPayload({ name, age, term, email, phone, resultKey, resultType, answersSummary }) {
+function buildSheetPayload({ name, age, term, phone, resultKey, resultType, answersSummary }) {
   return {
     submitted_at: new Date().toISOString(),
     language: currentLang,
     name,
     age,
     term_weeks: term,
-    email,
     phone,
     result_key: resultKey,
     result_type: resultType,
@@ -1792,7 +1867,6 @@ function saveToSheets(payload) {
 const nameInputEl = document.getElementById('f-name');
 const ageInputEl = document.getElementById('f-age');
 const termInputEl = document.getElementById('f-term');
-const emailInputEl = document.getElementById('f-email');
 const phoneInputEl = document.getElementById('f-phone');
 
 nameInputEl.addEventListener('input', () => {
@@ -1803,20 +1877,72 @@ nameInputEl.addEventListener('input', () => {
 ageInputEl.addEventListener('input', () => clearFieldError(ageInputEl));
 termInputEl.addEventListener('input', () => clearFieldError(termInputEl));
 
-emailInputEl.addEventListener('input', () => {
-  emailInputEl.value = emailInputEl.value.replace(/\s/g, '').toLowerCase();
-  clearFieldError(emailInputEl);
-});
-
 phoneInputEl.addEventListener('input', () => {
   phoneInputEl.value = normalizePhone(phoneInputEl.value);
   clearFieldError(phoneInputEl);
 });
 
+// ── TERM SLIDER (pregnancy week ranges)
+const TERM_RANGES = [
+  { label: '1', val: 1 },
+  { label: '2–4', val: 3 },
+  { label: '5–7', val: 6 },
+  { label: '8–10', val: 9 },
+  { label: '11–13', val: 12 },
+  { label: '14–16', val: 15 },
+  { label: '17–20', val: 18 },
+  { label: '21–24', val: 22 },
+  { label: '25–28', val: 26 },
+  { label: '29–32', val: 30 },
+  { label: '33–36', val: 34 },
+  { label: '37–42', val: 39 }
+];
+
+const sliderEl = document.getElementById('f-term-slider');
+const termLabelEl = document.getElementById('f-term-label');
+const termMarksEl = document.getElementById('term-marks');
+
+function renderTermMarks() {
+  if (!termMarksEl) return;
+  termMarksEl.innerHTML = TERM_RANGES.map(r => `<span>${r.label}</span>`).join('');
+}
+
+function updateTermFromSlider(index) {
+  const idx = Number(index);
+  const range = TERM_RANGES[idx] || TERM_RANGES[0];
+  termLabelEl.textContent = (currentLang === 'kz') ? `${range.label} апта` : `${range.label} нед.`;
+  termInputEl.value = String(range.val);
+  clearFieldError(termInputEl);
+}
+
+function initTermSlider() {
+  if (!sliderEl) return;
+  sliderEl.max = TERM_RANGES.length - 1;
+  renderTermMarks();
+
+  // Start position: try to match existing numeric input, otherwise default
+  const existing = Number(termInputEl.value) || 24;
+  let startIndex = TERM_RANGES.findIndex(r => r.val === existing);
+  if (startIndex === -1) {
+    // choose nearest
+    startIndex = TERM_RANGES.reduce((bestIdx, r, i) => {
+      return (Math.abs(r.val - existing) < Math.abs(TERM_RANGES[bestIdx].val - existing)) ? i : bestIdx;
+    }, 0);
+  }
+  sliderEl.value = startIndex;
+  updateTermFromSlider(startIndex);
+
+  sliderEl.addEventListener('input', (e) => updateTermFromSlider(e.target.value));
+}
+
+initTermSlider();
+
 // ════════════════════════════════════════
 //  SHOW RESULT
 // ════════════════════════════════════════
 function showResult(key, name) {
+  lastResultKey = key;
+  lastResultName = name;
   const r = results[key];
   const card = document.getElementById('result-card');
 
@@ -1841,6 +1967,19 @@ function showResult(key, name) {
   showScreen('screen-result');
   window.scrollTo({ top: 0, behavior: 'smooth' });
 }
+
+// Initialize language from previous selection (if any)
+try {
+  const saved = localStorage.getItem('siteLang');
+  if (saved === 'kz' || saved === 'ru') {
+    currentLang = saved;
+  }
+} catch (e) {}
+// Apply initial language UI
+document.body.className = 'lang-' + currentLang;
+document.querySelectorAll('.lang-btn').forEach(b => b.classList.remove('active'));
+const initialBtn = document.querySelector(`.lang-btn[onclick="setLang('${currentLang}')"]`);
+if (initialBtn) initialBtn.classList.add('active');
 </script>
 </body>
 </html>
