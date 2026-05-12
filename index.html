@@ -872,7 +872,7 @@
     object-fit: contain; /* show whole banner image */
     transition: transform 0.3s ease;
   }
-}
+
 .sponsor-banner-img {
   width: 100%;
   height: auto; /* show whole banner image */
@@ -885,28 +885,28 @@
   transform: scale(1.04);
 }
 
-/* Giraffe sponsor fullfit */
-.giraffe-sponsor {
+
+/* Full-width question sponsors (no inner padding, full visible) */
+.question-sponsor {
   display: none;
   width: 100%;
-  margin: 12px 0 0;
-  border-radius: 14px;
+  margin: 8px 0;
+  border-radius: 12px;
   overflow: hidden;
   cursor: pointer;
-  box-shadow: 0 2px 12px rgba(0,0,0,0.10);
+  box-shadow: 0 2px 8px rgba(0,0,0,0.10);
 }
-.giraffe-sponsor img {
+.question-sponsor img {
   width: 100%;
-  height: 130px;
-  object-fit: cover;
-  object-position: center;
+  height: auto;
   display: block;
-  transition: transform 0.3s ease;
+  object-fit: contain;
+  object-position: center;
+  transition: transform 0.25s ease;
 }
-.giraffe-sponsor:hover img {
-  transform: scale(1.03);
+.question-sponsor:hover img {
+  transform: scale(1.02);
 }
-#screen-question.active .giraffe-sponsor { display: block; }
 </style>
 </head>
 <body class="lang-ru">
@@ -980,26 +980,7 @@
     </div>
   </div>
 
-  <!-- Giraffe sponsor banner on quiz screen -->
-  <style>
-  .giraffe-sponsor {
-    display: none;
-    width: 100%;
-    margin: 8px 0;
-    border-radius: 12px;
-    overflow: hidden;
-    cursor: pointer;
-    box-shadow: 0 2px 8px rgba(0,0,0,0.1);
-  }
-  .giraffe-sponsor img {
-    width: 100%;
-    height: auto;
-    display: block;
-    object-fit: cover;
-    max-height: 120px;
-  }
-  #screen-question.active .giraffe-sponsor { display: block; }
-  </style>
+
 
   <!-- ══════════════ QUESTION ══════════════ -->
   <div class="screen" id="screen-question">
@@ -1035,8 +1016,36 @@
         </button>
       </div>
     </div>
-    <div class="giraffe-sponsor" onclick="openSponsorLink(6)">
-      <img src="images/reklama/Giraffee.jpeg" alt="Sponsor" />
+    <!-- Full-width question sponsors (no padding, full visible) - one per question -->
+    <div class="question-sponsor" data-show-on="1" onclick="openSponsorLink(6)">
+      <img src="images/reklama/Giraffee.jpeg" alt="Giraffee" />
+    </div>
+    <div class="question-sponsor" data-show-on="2" onclick="openSponsorLink(7)">
+      <img src="images/reklama/Vitaginal.jpeg" alt="Vitaginal" />
+    </div>
+    <div class="question-sponsor" data-show-on="3" onclick="openSponsorLink(8)">
+      <img src="images/reklama/Osteo.jpeg" alt="Osteo" />
+    </div>
+    <div class="question-sponsor" data-show-on="4" onclick="openSponsorLink(9)">
+      <img src="images/reklama/Nestle.jpeg" alt="Nestle" />
+    </div>
+    <div class="question-sponsor" data-show-on="5" onclick="openSponsorLink(10)">
+      <img src="images/reklama/Omron.jpeg" alt="Omron" />
+    </div>
+    <div class="question-sponsor" data-show-on="6" onclick="openSponsorLink(1)">
+      <img src="images/reklama/biomio.jpeg" alt="BioMIO" />
+    </div>
+    <div class="question-sponsor" data-show-on="7" onclick="openSponsorLink(2)">
+      <img src="images/reklama/pampers.jpeg" alt="Pampers" />
+    </div>
+    <div class="question-sponsor" data-show-on="8" onclick="openSponsorLink(3)">
+      <img src="images/reklama/babyroom.jpeg" alt="BabyRoom" />
+    </div>
+    <div class="question-sponsor" data-show-on="9" onclick="openSponsorLink(4)">
+      <img src="images/reklama/yokosun2.jpeg" alt="YokoSun 2" />
+    </div>
+    <div class="question-sponsor" data-show-on="10" onclick="openSponsorLink(5)">
+      <img src="images/reklama/Solgar.jpeg" alt="Solgar" />
     </div>
   </div>
 
@@ -1185,6 +1194,10 @@ const sponsorLinks = {
   4: 'https://example.com/sponsor4',
   5: 'https://example.com/sponsor5',
   6: 'https://example.com/sponsor6',
+  7: 'https://example.com/vitaginal',
+  8: 'https://example.com/osteo',
+  9: 'https://example.com/nestle',
+  10: 'https://example.com/omron',
 };
 
 function openSponsorLink(id) {
@@ -1482,6 +1495,13 @@ function renderQuestion() {
 
   document.getElementById('btn-prev').disabled = currentQ === 0;
   document.getElementById('btn-next').disabled = answers[currentQ] === null;
+
+  // Show or hide inline question sponsors based on data-show-on (1-based question numbers)
+  document.querySelectorAll('.question-sponsor').forEach(el => {
+    const showOn = (el.dataset.showOn || '').split(',').map(s => parseInt(s.trim(), 10)).filter(Boolean);
+    if (showOn.includes(currentQ + 1)) el.style.display = 'block';
+    else el.style.display = 'none';
+  });
 
   renderDots();
 }
