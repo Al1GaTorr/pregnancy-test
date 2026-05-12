@@ -422,16 +422,16 @@
     align-items: center;
     justify-content: center;
     box-shadow: 0 4px 16px rgba(196,123,110,0.12);
-    padding: 10px;
+    padding: 0; /* remove inner white gutters so images can fill */
   }
 
   .q-image-wrap img {
     width: 100%;
     height: 100%;
-    object-fit: contain;
+    object-fit: cover; /* fill the area without white edges */
     object-position: center;
-    border-radius: 10px;
-    background: #fff;
+    border-radius: 16px; /* match container radius */
+    background: transparent;
   }
 
   .q-image-fallback {
@@ -839,7 +839,7 @@
 /* Sponsor image styles — fullfit cover */
 .sponsor-item--img {
   padding: 0 !important;
-  background: #fff !important;
+  background: transparent !important; /* allow image to show fully */
   display: flex !important;
   align-items: stretch;
   justify-content: stretch;
@@ -848,8 +848,8 @@
 }
 .sponsor-img {
   width: 100%;
-  height: auto; /* preserve full image */
-  object-fit: none;
+  height: 100%; /* fill container */
+  object-fit: cover;
   object-position: center;
   display: block;
   border-radius: 12px;
@@ -865,18 +865,19 @@
 }
   .sponsor-banner-item img {
     width: 100%;
-    height: auto;
+    height: 100%;
     display: block;
-    margin: 0 auto;
+    margin: 0;
     border-radius: 12px; /* rounded corners on image */
-    object-fit: contain; /* show whole banner image */
+    object-fit: cover; /* fill the banner area */
     transition: transform 0.3s ease;
+    background: transparent;
   }
 
 .sponsor-banner-img {
   width: 100%;
-  height: auto; /* show whole banner image */
-  object-fit: none;
+  height: 100%; /* fill banner area */
+  object-fit: cover;
   object-position: center;
   display: block;
   transition: transform 0.3s ease;
@@ -1024,16 +1025,16 @@
       <img src="images/reklama/hydroten.jpeg" alt="Hydroten" />
     </div>
     <div class="question-sponsor" data-show-on="3" onclick="openSponsorLink(8)">
-      <img src="images/reklama/vitaginal.jpeg" alt="Vitaginal" />
-    </div>
-    <div class="question-sponsor" data-show-on="4" onclick="openSponsorLink(9)">
-      <img src="images/reklama/osteo.jpeg" alt="Osteo" />
-    </div>
-    <div class="question-sponsor" data-show-on="5" onclick="openSponsorLink(10)">
       <img src="images/reklama/nestle.jpeg" alt="Nestle" />
     </div>
-    <div class="question-sponsor" data-show-on="6" onclick="openSponsorLink(1)">
+    <div class="question-sponsor" data-show-on="4" onclick="openSponsorLink(9)">
+      <img src="images/reklama/vitaginal.jpeg" alt="Vitaginal" />
+    </div>
+    <div class="question-sponsor" data-show-on="5" onclick="openSponsorLink(10)">
       <img src="images/reklama/omron.jpeg" alt="Omron" />
+    </div>
+    <div class="question-sponsor" data-show-on="6" onclick="openSponsorLink(1)">
+      <img src="images/reklama/osteo.jpeg" alt="Osteo" />
     </div>
     <div class="question-sponsor" data-show-on="7" onclick="openSponsorLink(2)">
       <img src="images/reklama/biomio.jpeg" alt="Biomio" />
@@ -1458,17 +1459,32 @@ function renderQuestion() {
       ? `Сұрақ ${String(currentQ+1).padStart(2,'0')}`
       : `Вопрос ${String(currentQ+1).padStart(2,'0')}`;
 
-  // Add image if available
+  // Add image area (we will show sponsor banner here if available)
   const questionCard = document.querySelector('.question-card');
   let imageWrap = questionCard.querySelector('.q-image-wrap');
-  
+
   if (!imageWrap) {
     imageWrap = document.createElement('div');
     imageWrap.className = 'q-image-wrap';
     questionCard.insertBefore(imageWrap, document.getElementById('q-text'));
   }
-  
-  if (q.image) {
+
+  // Try to get an inline sponsor banner for this question and render it inside the image wrap
+  const sponsorEl = document.querySelector(`.question-sponsor[data-show-on="${currentQ + 1}"]`);
+  if (sponsorEl) {
+    const sponsorImg = sponsorEl.querySelector('img');
+    if (sponsorImg) {
+      imageWrap.style.display = 'flex';
+      const imageAltText = sponsorImg.getAttribute('alt') || (currentLang === 'kz' ? `Сұрақ ${currentQ + 1}` : `Вопрос ${currentQ + 1}`);
+      imageWrap.innerHTML = `<img alt="${imageAltText}" />`;
+      const imgEl = imageWrap.querySelector('img');
+      // Use same loader logic so different extensions are supported
+      setQuestionImage(imgEl, sponsorImg.getAttribute('src'), imageWrap);
+    } else {
+      imageWrap.style.display = 'none';
+    }
+  } else if (q.image) {
+    // Fall back to question's own image if no sponsor banner specified for this question
     imageWrap.style.display = 'flex';
     const imageAltText = currentLang === 'kz' ? `Сұрақ ${currentQ + 1}` : `Вопрос ${currentQ + 1}`;
     imageWrap.innerHTML = `<img alt="${imageAltText}" />`;
@@ -1496,12 +1512,9 @@ function renderQuestion() {
   document.getElementById('btn-prev').disabled = currentQ === 0;
   document.getElementById('btn-next').disabled = answers[currentQ] === null;
 
-  // Show or hide inline question sponsors based on data-show-on (1-based question numbers)
-  document.querySelectorAll('.question-sponsor').forEach(el => {
-    const showOn = (el.dataset.showOn || '').split(',').map(s => parseInt(s.trim(), 10)).filter(Boolean);
-    if (showOn.includes(currentQ + 1)) el.style.display = 'block';
-    else el.style.display = 'none';
-  });
+  // Hide the separate .question-sponsor elements to avoid duplicate banners
+  // (we render the sponsor banner inside the question image area instead)
+  document.querySelectorAll('.question-sponsor').forEach(el => el.style.display = 'none');
 
   renderDots();
 }
